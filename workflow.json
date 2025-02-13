@@ -1,0 +1,1880 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "limit": 200,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Upload Knowledge Base Webhook').item.json.body.folderId }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        880,
+        960
+      ],
+      "id": "a60d0ee2-7e44-4a0d-8b49-07313ae6fba1",
+      "name": "User Folder Scan",
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Om2RJmlFZKPaDqsL",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Upload Knowledge Base Webhook').item.json.body.knowledge_base }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "16i_sFUz7XXkFJ1hDgyFqeLIAhS2CBvaD",
+          "mode": "list",
+          "cachedResultName": "n8n_knowledge_base",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/16i_sFUz7XXkFJ1hDgyFqeLIAhS2CBvaD"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        160,
+        900
+      ],
+      "id": "62b21337-9a29-4ea3-b25a-2f66c2c7a0be",
+      "name": "Knowledge Base Folder Create",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Om2RJmlFZKPaDqsL",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $json.name }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Knowledge Base Folder Create').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1840,
+        760
+      ],
+      "id": "7307274e-3a02-41e4-afaa-3e46bb2fbeea",
+      "name": "User Files Upload",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Om2RJmlFZKPaDqsL",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1340,
+        960
+      ],
+      "id": "2c835573-0bab-46a9-87dd-ff93dff501c9",
+      "name": "User Files Download",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Om2RJmlFZKPaDqsL",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "limit": 200,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Knowledge Base Folder Create').item.json.id }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2040,
+        760
+      ],
+      "id": "dc0b9956-07af-46b2-be3a-7dd56d538e65",
+      "name": "Knowledge Base Folder Scan",
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Om2RJmlFZKPaDqsL",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/embeddings",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "input",
+              "value": "={{ $json.chunks[0] }}"
+            },
+            {
+              "name": "model",
+              "value": "text-embedding-3-small"
+            },
+            {
+              "name": "encoding_format",
+              "value": "float"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3680,
+        740
+      ],
+      "id": "6ad7a481-c72a-4232-a4c5-d24a6a3b06da",
+      "name": "Open AI Embedding Model HTTP Request",
+      "credentials": {
+        "openAiApi": {
+          "id": "TmTcaYNeNy2PIwRq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        2740,
+        760
+      ],
+      "id": "f24cfe23-93cf-4500-8506-6555a33bba93",
+      "name": "Extract from PDF Files"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        2740,
+        600
+      ],
+      "id": "ea6a3c65-c4b0-4532-ad2c-2e55623a3b84",
+      "name": "Extract from TXT Files"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2240,
+        760
+      ],
+      "id": "c8a6e508-62f7-4ce1-b38d-9da628dd8cbb",
+      "name": "Knowledge Base Files Download",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Om2RJmlFZKPaDqsL",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const chunks = [];\nconst chunkSize = 1000;\nconst chunkOverlap = 200;\nconst text = $json.data.replace(/\\n/, '');\n\nfor (let i=0,j=Math.round(text.length/chunkSize)+1;i<j;i++) {\n  chunks.push(\n    text.substr(\n      Math.max(0,(i * chunkSize)-chunkOverlap),\n      chunkSize\n    ).replace(/^\"|\"$/g, '').replace(/[\\u0000-\\u001F\\u007F]/g, '').replace(/[^\\x20-\\x7E]/g, '').replace(/[()\"']/g, '')\n  );\n}\n\nreturn { chunks };"
+      },
+      "id": "5f801979-d67a-4a04-856a-ece8d726c248",
+      "name": "Create Chunks From TXT Text",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2940,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const chunks = [];\nconst chunkSize = 1000;\nconst chunkOverlap = 200;\nconst text = $json.text.replace(/\\n/, '');\n\nfor (let i=0,j=Math.round(text.length/chunkSize)+1;i<j;i++) {\n  chunks.push(\n    text.substr(\n      Math.max(0,(i * chunkSize)-chunkOverlap),\n      chunkSize\n    ).replace(/^\"|\"$/g, '').replace(/[\\u0000-\\u001F\\u007F]/g, '').replace(/[^\\x20-\\x7E]/g, '').replace(/[()\"']/g, '')\n  );\n}\n\nreturn { chunks };"
+      },
+      "id": "9e5b2938-5260-4a5d-bfd4-0456684688ec",
+      "name": "Create Chunks From PDF Text",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2940,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.name }}",
+                    "rightValue": "=txt",
+                    "operator": {
+                      "type": "string",
+                      "operation": "endsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "TXT Files"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "54ab3b16-5e27-4fff-b839-4d7c6efbb1ca",
+                    "leftValue": "={{ $json.name }}",
+                    "rightValue": "pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "endsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF Files"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2520,
+        760
+      ],
+      "id": "b6582c3d-1c6c-4b0c-a5a2-11bfc0454d6b",
+      "name": "File Extensions Check"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=http://172.17.0.3:6333/collections/{{ $('Upload Knowledge Base Webhook').item.json.body.knowledge_base }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api-key",
+              "value": "<api-key-value>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"vectors\": {\n    \"size\": 1536,\n    \"distance\": \"Cosine\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4220,
+        600
+      ],
+      "id": "c07bee35-46b9-4c38-aa75-2e5f982f514e",
+      "name": "Create QDRANT Collection",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=http://172.17.0.3:6333/collections/{{ $('Upload Knowledge Base Webhook').item.json.body.knowledge_base }}/points",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api-key",
+              "value": "<api-key-value>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"points\": [\n    {\n      \"id\": {{$itemIndex}},\n      \"payload\": {\n        \"text\": \"{{ $('Merge into Chunks').item.json.chunks[$itemIndex].replace(/\\n/g, '') }}\"\n      },\n      \"vector\": [{{ $('Open AI Embedding Model HTTP Request').item.json.data[0].embedding }}\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4320,
+        760
+      ],
+      "id": "a1f3b5a1-3fcc-44ef-8bfb-3702dc680f6d",
+      "name": "Insert Embeddings and Chunks into QDRANT"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        3200,
+        760
+      ],
+      "id": "b92d0a1f-747b-4153-85a3-921fdfe5c30b",
+      "name": "Merge into Chunks"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "df593cdc-d116-473f-be82-7acb1e2db869",
+              "leftValue": "={{ $json.result.exists }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        900
+      ],
+      "id": "82a76e8e-2fbd-49e3-afd9-28e229a884bc",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "=http://172.17.0.3:6333/collections/{{ $json.body.knowledge_base }}/exists",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api-key",
+              "value": "<api-key-value>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -300,
+        900
+      ],
+      "id": "9b836c79-33cd-442b-8cf8-7c2a58c4ccab",
+      "name": "HTTP Request Check If Knowledge Base Existed"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "document_upload",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        900
+      ],
+      "id": "29f9bdf1-ffa7-4ea3-bf67-b9f9564b9fe1",
+      "name": "Upload Knowledge Base Webhook",
+      "webhookId": "3cfaa3f1-81a3-43a9-86c7-da5d62bedc33"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        4600,
+        580
+      ],
+      "id": "b5e2c1f2-f4df-427b-829e-0c4e711bb8f1",
+      "name": "Knowledge Base Uploaded Respond"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "=base64string",
+        "options": {
+          "fileName": "={{ $('Split File List into Items').item.json['body.files'].filename }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1520,
+        540
+      ],
+      "id": "8d824855-502c-4044-807e-a903c5cbbfc5",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d4ab0475-fd35-41d7-90ae-859f4c584682",
+              "name": "body.files",
+              "value": "={{ $('Upload Knowledge Base Webhook').item.json.body.files }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        540
+      ],
+      "id": "a948a096-26bd-4dcb-941e-c8c75b5bcf1a",
+      "name": "Map File List To Array"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.files",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        900,
+        540
+      ],
+      "id": "753c4de2-dd89-444a-b520-2d5d0367727f",
+      "name": "Split File List into Items"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "59a2f98c-65ae-4c6c-8e31-81dd5fd8671d",
+              "name": "base64string",
+              "value": "={{ $('Upload Knowledge Base Webhook').item.json.body.files[0].content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1320,
+        540
+      ],
+      "id": "65f1cebb-26b9-43d7-b9de-fc56b7c2562f",
+      "name": "Map Content to Base64"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cfd8f00e-e043-4c63-85ca-a972c9c02325",
+              "leftValue": "={{ $json['body.files'].filename }}",
+              "rightValue": "pdf",
+              "operator": {
+                "type": "string",
+                "operation": "endsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1080,
+        540
+      ],
+      "id": "02ad3ead-d74a-42f8-9045-9a54b82d8fd8",
+      "name": "File Extension Check"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        2980
+      ],
+      "id": "7c56f502-e9b7-4f5b-85de-d66418f208ea",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "TmTcaYNeNy2PIwRq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "feedback",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        2900
+      ],
+      "id": "352e204d-e089-4f1d-80c7-bb89fe4ae269",
+      "name": "Feedback Webhook",
+      "webhookId": "e8781a80-39cb-4399-aeb7-ee47f0149520"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a helpful assistant. Your task is to receive the user feedback based on the previous query and provide a short, specific instruction, one sentence on how to improve the result.\nHere's the data:\nKnowledge base: {{ $json.body.knowledge_base }}\nQuestion: {{ $json.body.question }}\nPrevious response: {{ $json.body.response }}\nFeedback: {{ $json.body.feedback }}\nComment: {{ $json.body.comment }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        180,
+        2800
+      ],
+      "id": "eff35c11-e88f-4119-9b3f-b55e689a2e0f",
+      "name": "Evaluation Agent"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        860,
+        2880
+      ],
+      "id": "536b76d8-a917-4163-80d4-3accdfeb4fc0",
+      "name": "Merge Feedback and Suggestion"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7eed2bbd-33dc-4709-be42-65ab8db4799e",
+              "name": "k",
+              "value": 20,
+              "type": "number"
+            },
+            {
+              "id": "30ad788b-c381-4e37-9567-a2fe09d7570a",
+              "name": "threshold",
+              "value": 0,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        380,
+        2000
+      ],
+      "id": "1bdf2bae-b565-4a7a-b9f2-33864fe7324a",
+      "name": "Set Retrieval Parameters"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "83edb2ce-81c5-4d38-9216-d0ea7ff3a1e4",
+              "name": "system_prompt",
+              "value": "=You are a helpful assistant. You must answer the question based on the knowledge base below:\n{{ $json.combinedText }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1660,
+        2000
+      ],
+      "id": "c0a6449e-db95-4277-8a79-d00ce1b3914d",
+      "name": "Set LLM Settings"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        900,
+        2000
+      ],
+      "id": "7e1d78a1-8a66-4212-b269-de1b8a8906ce",
+      "name": "Merge Chunk Items"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"gpt-4o\",\n  \"messages\": [\n    {\n      \"role\": \"developer\",\n      \"content\": \"{{ $('Merge Chunks Text').item.json.combinedText }}\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $('Query Webhook').item.json.body.question }}\"\n    }\n  ]\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1920,
+        2000
+      ],
+      "id": "4d699037-428b-4939-bfce-a271ca120218",
+      "name": "GPT 4o Mini Chat",
+      "credentials": {
+        "openAiApi": {
+          "id": "TmTcaYNeNy2PIwRq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2340,
+        1840
+      ],
+      "id": "770df861-6025-4e38-8131-ac43fe3065b4",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/embeddings",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "input",
+              "value": "={{ $json.body.question }}"
+            },
+            {
+              "name": "model",
+              "value": "text-embedding-3-small"
+            },
+            {
+              "name": "encoding_format",
+              "value": "float"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -180,
+        2000
+      ],
+      "id": "a991337c-cbf8-426c-9f47-1ec3929009ff",
+      "name": "Open AI Embedding Model HTTP Request1",
+      "credentials": {
+        "openAiApi": {
+          "id": "TmTcaYNeNy2PIwRq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "get_knowledge_base",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        1260
+      ],
+      "id": "49c2edf4-aeb1-4cef-a02d-12a31f51f91d",
+      "name": "Check Existing Knowledge Base Webhook",
+      "webhookId": "4e47916b-0c28-4b9e-8d3a-0c43f8e64e01"
+    },
+    {
+      "parameters": {
+        "url": "http://172.17.0.3:6333/collections",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api-key",
+              "value": "<api-key-value>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -280,
+        1260
+      ],
+      "id": "70d5145b-9130-48f8-8d0b-aa7cd08a74bf",
+      "name": "Get Knowledge Base From QDRANT"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        1260
+      ],
+      "id": "d55f5a4c-d42b-44f9-9025-12feb3d43c96",
+      "name": "Respond to Knowledge Base  Check Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1140,
+        2880
+      ],
+      "id": "2d9b71ec-2e56-48e1-8737-c0b702ca2335",
+      "name": "Convert to JSON Log"
+    },
+    {
+      "parameters": {
+        "name": "={{ $now.format('yy-MM-DD_HH-mm-ss') }}.json",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "12q5z1sPsr7c0_flVqWKBbiu7eqe3SprE",
+          "mode": "list",
+          "cachedResultName": "log_feedback",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/12q5z1sPsr7c0_flVqWKBbiu7eqe3SprE"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1420,
+        2880
+      ],
+      "id": "40db3e2b-a7da-40d6-a133-723b6559a202",
+      "name": "Upload to Log Folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Om2RJmlFZKPaDqsL",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Upload Knowledge Base Webhook').item.json.body.method }}",
+                    "rightValue": "local",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b0235836-320d-4267-a4c7-f68f2b2802e5",
+                    "leftValue": "={{ $('Upload Knowledge Base Webhook').item.json.body.method }}",
+                    "rightValue": "drive",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        460,
+        640
+      ],
+      "id": "4781d72e-632e-4e87-907f-07c2090af1a5",
+      "name": "Switch for Uploading Method"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Knowledge base existed!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        740
+      ],
+      "id": "31f23ae0-5e66-4aa5-83be-190d22f63fb5",
+      "name": "Knowledge Base Existed Respond",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "content": "## 1. WORKFLOW FOR DOCUMENTS UPLOADING, STORING AND KNOWLEDGE BASE CREATION",
+        "height": 1260,
+        "width": 5460,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -580,
+        220
+      ],
+      "typeVersion": 1,
+      "id": "15136162-ffb5-492f-b3b7-77a418290680",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## 1.2.1. LOCAL FILES UPLOADING\n- This block aim to convert the base64 string of the uploaded files to Binary file, a format required for uploading by Cloud Storage such as Google Drive.\n- For now, the conversion from encoded base64 TXT files have problem so only accept PDFs.\n- This block can only handle text-only files with proper PDF format.",
+        "height": 400,
+        "width": 1100,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        640,
+        300
+      ],
+      "typeVersion": 1,
+      "id": "d152b842-3725-431e-a179-331cad51d9f4",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## 1.2.2. DRIVE FILES (FOLDER) UPLOADING\n- The blocks aim to scan the files inside the folder the users drive link and download them to n8n temporary storage.\n- The link input must be of a folder and publicly shared.\n- The download files are of Binary format.",
+        "height": 360,
+        "width": 1100,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        640,
+        760
+      ],
+      "typeVersion": 1,
+      "id": "5870b811-3808-4f45-83c1-36f7387c538a",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## 1.3. STORING UPLOADED FILES IN DRIVE STORAGE\n- The stored files (files from local uploading or from drive scan) are then uploaded to the internal Drive folder as prepared before.\n- The step can take a very long time because of Drive downloading node.\n- Development direction: Write HTTP request to parallel this downloading process.",
+        "height": 600,
+        "width": 620,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1780,
+        340
+      ],
+      "typeVersion": 1,
+      "id": "891f9534-59d9-449e-9f70-0684c5ac4965",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## 1.4. DOCUMENT TYPES ROUTING AND CHUNKING\n- This block aim to once again filter only the supported file formats and perform rough cleaning as well as different chunking strategy on them.\n- Documents are splitted into raw text chunks.\n- Development Direction: Add more Document types and perform more thorough preprocessing / cleaning.",
+        "height": 580,
+        "width": 1080
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2460,
+        360
+      ],
+      "typeVersion": 1,
+      "id": "9a2a899f-c5fc-41e3-8b77-bba74f78fd24",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## 1.1.1. WEBHOOK FOR KNOWLEDGE BASE CREATION\n\n- This webhook triggers upon a POST request from API.\n- The POST request should include the fields in the Body:\n-- \"type\": \"local\" or \"drive\"\n-- \"knowledge_base\": string name of the knowledge base\n-- If \"type\" is \"local\", further parameters are required:\n   + \"files\":\n     + \"filename\": name of the file, with extension\n     + \"content\": base64 encoded string of the file \n-- If \"type\" is \"drive\", further parameters are required:\n   + \"folderId\": id of the user drive folder (must be publicly shared)\n\n\n- Then the HTTP Request Node will check with the local QDRANT Vector Database to see if the knowledge base with such name has already existed.\n- If not, then a folder is created on the internal Drive (remember to prepare a folder for this on your drive) with the name of the knowledge base.",
+        "height": 740,
+        "width": 960,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -560,
+        340
+      ],
+      "typeVersion": 1,
+      "id": "76aab2f8-ce56-4051-b26b-da95c7e95059",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## 1.5. EXTRACT EMBEDDINGS FROM DOCUMENTS' CHUNKS AND UPLOAD TO VECTOR DATABASE\n\n- This block aims to extract text embeddings from the raw chunks earlier.\n- This example utilized OpenAI text-embedding-3-small with a vector dimension of 1536.\n- You **must set the dimension of the vector correctly and adjust the similarity metric if needed** before calling the QDRANT Nodes.\n- The QDRANT HTTP Nodes firstly create a knowledge base with the name as defined before (they are called \"colletions\" inside QDRANT) with a fixed vector dimension and similarity metric.\n- Then the vector created from OpenAI text embeddings will be inserted into the collection with its text chunks as a payload field (metadata field).\n- After inserting, the vectors are automatically indexed and ready for retrieval operations.\n- For more QDRANT documentation on this process, visit [here](https://qdrant.tech/documentation).",
+        "height": 560,
+        "width": 940,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3580,
+        360
+      ],
+      "typeVersion": 1,
+      "id": "81eeca56-ee50-4abd-b039-b02166a3f04f",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f586cde1-6b38-4707-9343-3603927fb2b2",
+              "name": "vector_dimension",
+              "value": 1536,
+              "type": "number"
+            },
+            {
+              "id": "9ea75b4a-e736-4985-98c1-42eee1fd5dd0",
+              "name": "similarity_metric",
+              "value": "Cosine",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3880,
+        740
+      ],
+      "id": "570e6a93-2d08-4498-81ce-346d7e4f423d",
+      "name": "Set Vector Dimension and Similarity Metric"
+    },
+    {
+      "parameters": {
+        "content": "## 1.1.2. WEBHOOK TO CHECK FOR EXISTING KNOWLEDGE BASES\n- This Webhook triggers upon a POST request with no parameter.\n- Just serves a single purpose: to return a list of knowledge base already existed.",
+        "height": 320,
+        "width": 960,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -560,
+        1120
+      ],
+      "typeVersion": 1,
+      "id": "ea55de37-0344-4596-b22e-a81cada3e832",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## 2. WORKFLOW FOR KNOWLEDGE BASE QUERYING",
+        "height": 640,
+        "width": 3140
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -600,
+        1620
+      ],
+      "typeVersion": 1,
+      "id": "94cc387f-8aca-4da6-8a33-16d94703e2e7",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## 2.1. WEBHOOK FOR RECEIVING USER QUERIES AND EXTRACT EMBEDDINGS\n\n- This Webhook triggers upon a POST request from API.\n- The POST request should include the fields in the Body:\n-- \"question\": string of user question.\n-- \"knowledge_base\": string name of the knowledge base.\n\n- After that, the question of the user has its embedding extracted by calling the HTTP Request of OpenAI Embedding API text-embedding-3-small.\n- Please notice that this embedding and the embedding in the Knowledge Base creation section **must be the same**.\n",
+        "height": 480,
+        "width": 680,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -560,
+        1700
+      ],
+      "typeVersion": 1,
+      "id": "0b326c7b-232b-4563-9e62-dea7d00cee23",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "## 2.2. CHUNKS RETRIEVAL\n\n- This block retrieve chunks that are similar to the user question (shared keywords, same sentiment meaning, etc).\n- The chunks are retrieved in the knowledge base stored in the QDRANT Vector Database.\n- k (default 20) chunks are retrieved and only returned if they have a similarity score of over \"threshold\" (default 0.0).\n- The retrieved chunks are concated into one single instance before serving as the context for LLM answers.\n- Development direction: Add reranking models here, right after the \"Retrieve Chunks...\" Node, for example Cohere reranker.",
+        "height": 460,
+        "width": 1120,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        1720
+      ],
+      "typeVersion": 1,
+      "id": "68c4e929-c871-4942-93f1-a7ce00065bc1",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://172.17.0.3:6333/collections/{{ $('Query Webhook').item.json.body.knowledge_base }}/points/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api-key",
+              "value": "<api-key-value>"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"vector\": [\n{{ $('Open AI Embedding Model HTTP Request1').item.json.data[0].embedding }}\n  ],\n  \"limit\": 20,\n  \"with_payload\": true,\n  \"score_threshold\": {{ $json.threshold }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        2000
+      ],
+      "id": "fb73e285-a8bb-407f-8e20-0f85f83de5e5",
+      "name": "Retrieve Chunks from QDRANT Knowledge Base"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Initialize an empty string to store the combined text\nlet combinedText = \"\";\n\n// Loop through each item in the 'result' array and append the text to the combinedText\nfor (let item of $input.first().json.result) {\n    // Check if 'payload.text' exists and is a string\n    if (item.payload && item.payload.text) {\n        combinedText += item.payload.text + \" \"; // Add a space to separate the texts\n    }\n}\n\n// Return the result with the combined text\nreturn [\n    {\n        json: {\n            combinedText: combinedText.trim() // Remove the extra space at the end\n        }\n    }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        2000
+      ],
+      "id": "d0c52879-ae16-43f9-9be3-7f494dbc0ffc",
+      "name": "Merge Chunks Text"
+    },
+    {
+      "parameters": {
+        "content": "## 2.3. LLM TO GENERATE ANSWERS\n- This block aims to call a LLM API to generate answers based on the context (the chunks retrieved and the user questions).\n- The system prompt and additional parameter must be set before the Chat node.\n- For example, this block called OpenAI Chat model, gpt-4o-mini.",
+        "height": 460,
+        "width": 820,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1460,
+        1720
+      ],
+      "typeVersion": 1,
+      "id": "f2e0479f-452b-4289-9d0f-67a461da7c25",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "## 3. WORKFLOW FOR FEEDBACKS HANDLING ",
+        "height": 840,
+        "width": 2360,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        2320
+      ],
+      "id": "dc8e1d96-9650-4939-9a9a-867a3ddc4c76",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "content": "## 3.1. WEBHOOK FOR RECIEVING FEEDBACK AND LLM AGENT FOR GENERATING SUGGESTIONS\n\n- This webhook triggers upon a POST request from the API.\n- The POST request must include the fields in the Body:\n-- \"question\": string of user question.\n-- \"knowledge_base\": string name of the knowledge base.\n-- \"response\": string of the respond of the Chat model.\n-- \"feedback\": \"thumb up\" or \"thumb down\".\n-- \"comment\": string of the user comment (optional).\n\n- The above information are then fed to an AI Agent (basically an LLM, and in this example is gpt-4o-mini) to generated suggestion on how to improve the reponse of the model.\n- Development direction: This AI Agent can use additional Tools and and interact with parameter if instructed, so suggestion can be made into adjustment to parameter, or to generate a finetune datasets.",
+        "height": 700,
+        "width": 1040,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        2420
+      ],
+      "id": "bedc8d0f-0f3a-4305-8b15-f282d388ab3e",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "## 3.2. LOG FEEDBACKS AND SUGGESTIONS\n\n- This block aims to log the previous information (knowledge base, question, response, feedback, suggestion) for later viewing.\n- Please be notice to prepare the Log folder on the your internal Drive for this block to work (adjust the upload node).\n",
+        "height": 660,
+        "width": 1060,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        660,
+        2420
+      ],
+      "typeVersion": 1,
+      "id": "5438b989-a165-4a84-8049-93bf75766612",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "query",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        2000
+      ],
+      "id": "f530d892-2b8c-4658-8603-c7f3e0bcea73",
+      "name": "Query Webhook",
+      "webhookId": "636820dd-51f6-4b11-87a1-a9adf2a67252"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "chunks",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        3380,
+        760
+      ],
+      "id": "0d74973e-e8b7-440c-808b-5b5fada14856",
+      "name": "Split into Chunk Items"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Only TXT files allowed for this method!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1520,
+        380
+      ],
+      "id": "ea17e2d4-22c3-45ff-8a73-5f5d3d6762f7",
+      "name": "Only TXT Respond",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "content": "## N8N KNOWLEDGE BASE PROJECT\n\n**Main Objective**\nA knowledge base system built using n8n as the workflow automation platform. \nThe system allows users to upload documents, query the content, and give suggestion on how to improve the knowledge base based on user feedback.\n\n\n## Requirements and End Results:\n\n**Document Upload:**\n- Used N8N file handlings nodes to allow local files (PDF) uploading and drive files (PDF/TXT in a publicly shared folder) uploading.\n- The maximum number of files can be handled at once is 200. The larger the quanity, the slower the processing speed (125 documents will probably take up to 7 minutes to finish processing).\n- Stored the uploaded documents on Google Drive.\n\n\n**Document Processing:**\n- Deployed a HTTP Request Node to send documents' chunks to OpenAI Embedding API (text-embedding-3-small).\n- Stored and indexed chunks and their embeddings using QDRANT Vector Database using HTTP Request Node on local QDRANT service.\n\n\n**Query / Web Interface:**\n- Deployed a Webhook with HTTP Request Node to receive user query, extract embedding using OpenAI Embedding API (text-embedding-3-small).\n- Deployed a HTTP Request Node to retrieval relevant chunks from the QDRANT Vector Database and used the question and chunks to generate answer using HTTP Request Node and OpenAI Chat API (gpt-4o-mini).\n- Used Flask, Python, HTML to deploy an API with Web Interface that allows users to: 1) Create knowledge base and upload document ; 2) Query a knowledge base with a textual question ; 3) Send feedback based on the answers received.\n- Hosted the app locally and used NGROK to tunnel the API to public access.\n\n\n**Self-Learning Mechanism:**\n- Store the knowledge bases, questions, answers and user feedbacks (thumb up, thumb down and text comments).\n- Used the above information for an AI Agent to generate suggestions on how to improve the results.\n- Development Direction: Use the above suggestions and AI Tools to automatically tune the parameter or generate finetune datasets for LLM and embedding models.\n\n\n**Reusable Workflow:**\n- The workflow is splitted into seperate parts correspond to the subtasks.\n- Each type of uploading methods and files uploaded are handled seperately.\n- No over-reliance on n8n's exclusive features (for example use HTTP Request Nodes for Embedding / Chat models instead of using AI Agent and Vector Stores)\n\n\n\n",
+        "height": 840,
+        "width": 1180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -580,
+        -1000
+      ],
+      "typeVersion": 1,
+      "id": "cc6d9c88-51a5-44cc-b201-dd92ff1c6044",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "content": "## README (Pre-requisite)\n- Set up [Google Drive API Authentication](https://docs.n8n.io/integrations/builtin/credentials/google/) for n8n\n- Get [OpenAI API key](https://docs.n8n.io/integrations/builtin/credentials/openai/) to use in OpenAI HTTP Request Nodes.\n- Set up [QDRANT Vector Database locally](https://qdrant.tech/documentation/quickstart/), running default on port 6333.\n- Set up API to interact with the Webhooks, example at [here](https://github.com/phamgiakiet273/n8n-knowledge-base)\n- Prepare text-only TXT (for Drive upload) and text-only PDF (for Drive / Local upload) for testing.",
+        "height": 320,
+        "width": 520,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -580,
+        -140
+      ],
+      "typeVersion": 1,
+      "id": "f26fc8ed-0411-4963-9b90-d691ee70e56a",
+      "name": "Sticky Note16"
+    },
+    {
+      "parameters": {
+        "content": "## Example links\n- [Knowledge base storing and feedback logs](https://drive.google.com/drive/folders/16i_sFUz7XXkFJ1hDgyFqeLIAhS2CBvaD?usp=sharing)\n- [Live API](https://dd1e-113-23-110-90.ngrok-free.app/), contact phamgiakiet273@gmail.com if down.",
+        "height": 320,
+        "width": 520,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        20,
+        -140
+      ],
+      "typeVersion": 1,
+      "id": "f902b8da-9efd-44fa-af28-d0d18f36756f",
+      "name": "Sticky Note17"
+    }
+  ],
+  "connections": {
+    "User Folder Scan": {
+      "main": [
+        [
+          {
+            "node": "User Files Download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Base Folder Create": {
+      "main": [
+        [
+          {
+            "node": "Switch for Uploading Method",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Files Upload": {
+      "main": [
+        [
+          {
+            "node": "Knowledge Base Folder Scan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Files Download": {
+      "main": [
+        [
+          {
+            "node": "User Files Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Base Folder Scan": {
+      "main": [
+        [
+          {
+            "node": "Knowledge Base Files Download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Open AI Embedding Model HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Set Vector Dimension and Similarity Metric",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from PDF Files": {
+      "main": [
+        [
+          {
+            "node": "Create Chunks From PDF Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from TXT Files": {
+      "main": [
+        [
+          {
+            "node": "Create Chunks From TXT Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Base Files Download": {
+      "main": [
+        [
+          {
+            "node": "File Extensions Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Chunks From TXT Text": {
+      "main": [
+        [
+          {
+            "node": "Merge into Chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Chunks From PDF Text": {
+      "main": [
+        [
+          {
+            "node": "Merge into Chunks",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "File Extensions Check": {
+      "main": [
+        [
+          {
+            "node": "Extract from TXT Files",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract from PDF Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create QDRANT Collection": {
+      "main": [
+        []
+      ]
+    },
+    "Insert Embeddings and Chunks into QDRANT": {
+      "main": [
+        [
+          {
+            "node": "Knowledge Base Uploaded Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge into Chunks": {
+      "main": [
+        [
+          {
+            "node": "Split into Chunk Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Knowledge Base Existed Respond",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Knowledge Base Folder Create",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request Check If Knowledge Base Existed": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Knowledge Base Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request Check If Knowledge Base Existed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "User Files Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map File List To Array": {
+      "main": [
+        [
+          {
+            "node": "Split File List into Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split File List into Items": {
+      "main": [
+        [
+          {
+            "node": "File Extension Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map Content to Base64": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File Extension Check": {
+      "main": [
+        [
+          {
+            "node": "Map Content to Base64",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Only TXT Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Evaluation Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback Webhook": {
+      "main": [
+        [
+          {
+            "node": "Evaluation Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge Feedback and Suggestion",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Evaluation Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge Feedback and Suggestion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Feedback and Suggestion": {
+      "main": [
+        [
+          {
+            "node": "Convert to JSON Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Retrieval Parameters": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Chunks from QDRANT Knowledge Base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set LLM Settings": {
+      "main": [
+        [
+          {
+            "node": "GPT 4o Mini Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Chunk Items": {
+      "main": [
+        [
+          {
+            "node": "Merge Chunks Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT 4o Mini Chat": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Open AI Embedding Model HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Set Retrieval Parameters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Existing Knowledge Base Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get Knowledge Base From QDRANT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Knowledge Base From QDRANT": {
+      "main": [
+        [
+          {
+            "node": "Respond to Knowledge Base  Check Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to JSON Log": {
+      "main": [
+        [
+          {
+            "node": "Upload to Log Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch for Uploading Method": {
+      "main": [
+        [
+          {
+            "node": "Map File List To Array",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "User Folder Scan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Vector Dimension and Similarity Metric": {
+      "main": [
+        [
+          {
+            "node": "Create QDRANT Collection",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Insert Embeddings and Chunks into QDRANT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Chunks from QDRANT Knowledge Base": {
+      "main": [
+        [
+          {
+            "node": "Merge Chunk Items",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Chunks Text": {
+      "main": [
+        [
+          {
+            "node": "Set LLM Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Webhook": {
+      "main": [
+        [
+          {
+            "node": "Open AI Embedding Model HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split into Chunk Items": {
+      "main": [
+        [
+          {
+            "node": "Open AI Embedding Model HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "354936b7a1c87c3339bdb3995e61aad457181b005206511c9b223a3d797e6d83"
+  }
+}
