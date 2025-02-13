@@ -216,7 +216,7 @@
             </div>
             <div class="input-group">
                 <label for="knowledgeBaseUpload">Knowledge Base Name:</label>
-                <input type="text" id="knowledgeBaseUpload">
+                <input type="text" id="knowledgeBaseUpload" oninput="this.value = this.value.replace(/\s/g, '')">
             </div>
             <button id="uploadBtn" onclick="uploadData()">Upload</button>
             <p class="loading" id="uploadLoading">Uploading...</p>
@@ -286,16 +286,22 @@
             const uploadLoading = document.getElementById('uploadLoading');
             const uploadResult = document.getElementById('uploadResult');
             const uploadError = document.getElementById('uploadError');
-
+        
             uploadResult.innerHTML = "";
             uploadError.style.display = "none";
-
+        
+            // Check if the knowledge base name contains spaces
             if (!knowledgeBase) {
                 uploadError.innerHTML = "Knowledge Base Name is required.";
                 uploadError.style.display = "block";
                 return;
             }
-
+            if (/\s/.test(knowledgeBase)) {  // This regex checks for spaces
+                uploadError.innerHTML = "Knowledge Base Name cannot contain spaces.";
+                uploadError.style.display = "block";
+                return;
+            }
+        
             let payload;
             if (isDriveUpload) {
                 const folderUrl = document.getElementById('folderUrl').value.trim();
@@ -313,7 +319,15 @@
                     uploadError.style.display = "block";
                     return;
                 }
-                
+        
+                for (let file of files) {
+                    if (file.size > 20 * 1024 * 1024) { // 20MB in bytes
+                        uploadError.innerHTML = `Error: ${file.name} exceeds 20MB file size limit.`;
+                        uploadError.style.display = "block";
+                        return;
+                    }
+                }
+
                 const filePromises = Array.from(files).map(file => {
                     return new Promise((resolve) => {
                         const reader = new FileReader();
@@ -324,7 +338,7 @@
                         reader.readAsDataURL(file);
                     });
                 });
-                
+        
                 const fileData = await Promise.all(filePromises);
                 payload = { 
                     type: 'local', 
@@ -332,22 +346,22 @@
                     files: fileData 
                 };
             }
-
+        
             uploadBtn.disabled = true;
             uploadLoading.style.display = "block";
-
+        
             try {
                 const response = await fetch("/upload", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
-                
+        
                 const data = await response.json();
-                
+        
                 uploadLoading.style.display = "none";
                 uploadBtn.disabled = false;
-
+        
                 if (data.status === "success") {
                     uploadResult.innerHTML = "Upload Complete";
                     fetchKnowledgeBaseList();
