@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test App</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #74ABE2, #5563DE);
+            color: #333;
+        }
+        .wrapper {
+            padding: 40px;
+            max-width: 900px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+        /* Container Styles */
+        .container {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #5563DE;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover:not(:disabled) {
+            background-color: #3e4fbf;
+        }
+        button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            font-weight: bold;
+            color: #5563DE;
+            margin-top: 10px;
+        }
+        .result, .error {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            line-height: 1.5;
+        }
+        .result {
+            background: #e9ecef;
+            border-left: 4px solid #5563DE;
+        }
+        .error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        .info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #856404;
+        }
+        /* New styles for file upload */
+        #localUpload, #driveUpload {
+            margin-top: 10px;
+        }
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+        label[for="driveRadio"], label[for="localRadio"] {
+            margin-right: 15px;
+            font-weight: normal;
+        }
+        #fileInput {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        /* Add these new styles to the existing CSS */
+        #feedbackSection {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            display: none;
+        }
+
+        .feedback-buttons {
+            margin: 10px 0;
+        }
+
+        .feedback-btn {
+            padding: 8px 20px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .feedback-btn.active {
+            transform: scale(1.1);
+        }
+
+        #upvoteBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #upvoteBtn.active {
+            background-color: #45a049;
+        }
+
+        #downvoteBtn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        #downvoteBtn.active {
+            background-color: #da190b;
+        }
+
+        #comment {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+            min-height: 80px;
+        }
+
+        #sendFeedbackBtn {
+            background-color: #5563DE;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #sendFeedbackBtn:hover {
+            background-color: #3e4fbf;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <h1>Test App</h1>
+
+        <!-- Upload Section -->
+        <div class="container">
+            <h2>Upload Knowledge Base</h2>
+            <div class="info">
+                <p>Choose between Google Drive or Local File upload</p>
+                <p>Ensure the Google Drive link is publicly shared if using Drive.</p>
+                <p>Knowledge Base name cannot contain spaces.</p>
+                <p>All fields are required.</p>
+                <p>Currently, for Drive, text-only PDFs and TXTs are supported.</p>
+                <p>Currently, for Local, only text-only PDFs are supported.</p>
+                <p>Refresh the page if the knowledge base doesn't show up in the dropdown.</p>
+            </div>
+            <div class="input-group">
+                <div style="margin-bottom: 10px;">
+                    <input type="radio" id="driveRadio" name="uploadType" value="drive" checked onclick="toggleUploadType()">
+                    <label for="driveRadio">Google Drive</label>
+                    
+                    <input type="radio" id="localRadio" name="uploadType" value="local" onclick="toggleUploadType()">
+                    <label for="localRadio">Local Files</label>
+                </div>
+                
+                <div id="driveUpload">
+                    <label for="folderUrl">Google Drive Folder URL:</label>
+                    <input type="text" id="folderUrl">
+                </div>
+                
+                <div id="localUpload" style="display: none;">
+                    <label for="fileInput">Select Files (PDF):</label>
+                    <input type="file" id="fileInput" multiple accept=".pdf">
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="knowledgeBaseUpload">Knowledge Base Name:</label>
+                <input type="text" id="knowledgeBaseUpload">
+            </div>
+            <button id="uploadBtn" onclick="uploadData()">Upload</button>
+            <p class="loading" id="uploadLoading">Uploading...</p>
+            <p class="result" id="uploadResult"></p>
+            <p class="error" id="uploadError" style="display: none;"></p>
+        </div>
+
+        <!-- Query Section -->
+        <div class="container">
+            <h2>Query Knowledge Base</h2>
+            <div class="info">
+                <p>Select a Knowledge Base and enter your question.</p>
+                <p>All fields are required.</p>
+            </div>
+            <div class="input-group">
+                <label for="knowledgeBaseQuery">Knowledge Base Name:</label>
+                <select id="knowledgeBaseQuery"></select>
+            </div>
+            <div class="input-group">
+                <label for="question">Your Question:</label>
+                <input type="text" id="question">
+            </div>
+            <button id="queryBtn" onclick="queryData()">Ask</button>
+            <p class="loading" id="queryLoading">Querying...</p>
+            <p class="result" id="queryResult"></p>
+            <p class="error" id="queryError" style="display: none;"></p>
+            
+            <!-- New Feedback Section -->
+            <div id="feedbackSection">
+                <h3>Provide Feedback</h3>
+                <div class="feedback-buttons">
+                    <button class="feedback-btn" id="upvoteBtn" onclick="handleFeedback('upvote')">👍 Helpful</button>
+                    <button class="feedback-btn" id="downvoteBtn" onclick="handleFeedback('downvote')">👎 Not Helpful</button>
+                </div>
+                <textarea id="comment" placeholder="Optional: Add additional comments..."></textarea>
+                <button id="sendFeedbackBtn" onclick="submitFeedback()">Send Feedback</button>
+                <p class="loading" id="feedbackLoading" style="display: none;">Sending feedback...</p>
+                <p class="result" id="feedbackResult" style="display: none;"></p>
+                <p class="error" id="feedbackError" style="display: none;"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchKnowledgeBaseList();
+        });
+
+        function toggleUploadType() {
+            const driveRadio = document.getElementById('driveRadio');
+            const driveUpload = document.getElementById('driveUpload');
+            const localUpload = document.getElementById('localUpload');
+            
+            if (driveRadio.checked) {
+                driveUpload.style.display = 'block';
+                localUpload.style.display = 'none';
+            } else {
+                driveUpload.style.display = 'none';
+                localUpload.style.display = 'block';
+            }
+        }
+
+        async function uploadData() {
+            const isDriveUpload = document.getElementById('driveRadio').checked;
+            const knowledgeBase = document.getElementById('knowledgeBaseUpload').value.trim();
+            const uploadBtn = document.getElementById('uploadBtn');
+            const uploadLoading = document.getElementById('uploadLoading');
+            const uploadResult = document.getElementById('uploadResult');
+            const uploadError = document.getElementById('uploadError');
+
+            uploadResult.innerHTML = "";
+            uploadError.style.display = "none";
+
+            if (!knowledgeBase) {
+                uploadError.innerHTML = "Knowledge Base Name is required.";
+                uploadError.style.display = "block";
+                return;
+            }
+
+            let payload;
+            if (isDriveUpload) {
+                const folderUrl = document.getElementById('folderUrl').value.trim();
+                if (!folderUrl) {
+                    uploadError.innerHTML = "Google Drive URL is required.";
+                    uploadError.style.display = "block";
+                    return;
+                }
+                payload = { type: 'drive', folderUrl, knowledge_base: knowledgeBase };
+            } else {
+                const fileInput = document.getElementById('fileInput');
+                const files = fileInput.files;
+                if (files.length === 0) {
+                    uploadError.innerHTML = "Please select at least one file.";
+                    uploadError.style.display = "block";
+                    return;
+                }
+                
+                const filePromises = Array.from(files).map(file => {
+                    return new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve({
+                            filename: file.name,
+                            content: reader.result.split(',')[1]
+                        });
+                        reader.readAsDataURL(file);
+                    });
+                });
+                
+                const fileData = await Promise.all(filePromises);
+                payload = { 
+                    type: 'local', 
+                    knowledge_base: knowledgeBase,
+                    files: fileData 
+                };
+            }
+
+            uploadBtn.disabled = true;
+            uploadLoading.style.display = "block";
+
+            try {
+                const response = await fetch("/upload", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                
+                uploadLoading.style.display = "none";
+                uploadBtn.disabled = false;
+
+                if (data.status === "success") {
+                    uploadResult.innerHTML = "Upload Complete";
+                    fetchKnowledgeBaseList();
+                } else {
+                    uploadError.innerHTML = "Error: " + (data.message || "Unknown error");
+                    uploadError.style.display = "block";
+                }
+            } catch (error) {
+                uploadLoading.style.display = "none";
+                uploadBtn.disabled = false;
+                uploadError.innerHTML = "Error: " + error.message;
+                uploadError.style.display = "block";
+            }
+        }
+
+        function fetchKnowledgeBaseList() {
+            fetch("/get_knowledge_base", { method: "GET" })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        const knowledgeBaseSelect = document.getElementById("knowledgeBaseQuery");
+                        knowledgeBaseSelect.innerHTML = "";
+                        data.knowledge_bases.forEach(name => {
+                            let option = document.createElement("option");
+                            option.value = name;
+                            option.textContent = name;
+                            knowledgeBaseSelect.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => console.error("Error fetching knowledge base list:", error));
+        }
+
+        let currentFeedback = null;
+        let currentResponse = null;
+
+        function handleFeedback(type) {
+            currentFeedback = type;
+            document.querySelectorAll('.feedback-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        async function submitFeedback() {
+            const feedbackLoading = document.getElementById('feedbackLoading');
+            const feedbackResult = document.getElementById('feedbackResult');
+            const feedbackError = document.getElementById('feedbackError');
+            const comment = document.getElementById('comment').value.trim();
+
+            if (!currentFeedback) {
+                feedbackError.textContent = "Please select either Helpful or Not Helpful";
+                feedbackError.style.display = 'block';
+                return;
+            }
+
+            const payload = {
+                knowledge_base: document.getElementById('knowledgeBaseQuery').value,
+                question: document.getElementById('question').value.trim(),
+                response: document.getElementById('queryResult').innerHTML,
+                feedback: currentFeedback,
+                comment: comment
+            };
+
+            feedbackLoading.style.display = 'block';
+            feedbackError.style.display = 'none';
+            feedbackResult.style.display = 'none';
+
+            try {
+                const response = await fetch('/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    feedbackResult.textContent = 'Thank you for your feedback!';
+                    feedbackResult.style.display = 'block';
+                    // Reset feedback UI
+                    document.querySelectorAll('.feedback-btn').forEach(btn => btn.classList.remove('active'));
+                    document.getElementById('comment').value = '';
+                    currentFeedback = null;
+                } else {
+                    feedbackError.textContent = 'Error submitting feedback: ' + (data.message || 'Unknown error');
+                    feedbackError.style.display = 'block';
+                }
+            } catch (error) {
+                feedbackError.textContent = 'Error: ' + error.message;
+                feedbackError.style.display = 'block';
+            } finally {
+                feedbackLoading.style.display = 'none';
+            }
+        }
+
+        function queryData() {
+            const knowledgeBase = document.getElementById("knowledgeBaseQuery").value;
+            const question = document.getElementById("question").value.trim();
+            const queryBtn = document.getElementById("queryBtn");
+            const queryLoading = document.getElementById("queryLoading");
+            const queryResult = document.getElementById("queryResult");
+            const queryError = document.getElementById("queryError");
+        
+            queryResult.innerHTML = "";
+            queryError.style.display = "none";
+        
+            if (!knowledgeBase) {
+                queryError.innerHTML = "Please select a knowledge base.";
+                queryError.style.display = "block";
+                return;
+            }
+        
+            if (!question) {
+                queryError.innerHTML = "Please enter a question.";
+                queryError.style.display = "block";
+                return;
+            }
+        
+            queryBtn.disabled = true;
+            queryLoading.style.display = "block";
+        
+            fetch("/query", {
+                method: "POST",
+                body: new URLSearchParams({ question, knowledge_base: knowledgeBase }),
+                headers: { "Content-Type": "application/x-www-form-urlencoded" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                queryLoading.style.display = "none";
+                queryBtn.disabled = false;
+                if (data.status === "success") {
+                    let formattedResponse = data.response.replace(/\n\n/g, '<br><br>');
+                    queryResult.innerHTML = formattedResponse;
+                    document.getElementById('feedbackSection').style.display = 'block'; // Show feedback
+                    currentResponse = formattedResponse; // Store current response
+                } else {
+                    queryError.innerHTML = "Error: " + data.message;
+                    queryError.style.display = "block";
+                }
+            })
+            .catch(error => {
+                queryLoading.style.display = "none";
+                queryBtn.disabled = false;
+                queryError.innerHTML = "Error: " + error.message;
+                queryError.style.display = "block";
+            });
+        }
+    </script>
+</body>
+</html> 
