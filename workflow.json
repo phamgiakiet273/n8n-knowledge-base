@@ -157,7 +157,7 @@
           "parameters": [
             {
               "name": "input",
-              "value": "={{ $json.chunks[0] }}"
+              "value": "=Chunk: {{ $json.chunks[0] }}"
             },
             {
               "name": "model",
@@ -970,8 +970,7 @@
     },
     {
       "parameters": {
-        "respondWith": "text",
-        "responseBody": "Knowledge base existed!",
+        "respondWith": "allIncomingItems",
         "options": {}
       },
       "type": "n8n-nodes-base.respondToWebhook",
@@ -1034,7 +1033,7 @@
     },
     {
       "parameters": {
-        "content": "## 1.3. STORING UPLOADED FILES IN DRIVE STORAGE\n- The stored files (files from local uploading or from drive scan) are then uploaded to the internal Drive folder as prepared before.\n- The step can take a very long time because of Drive downloading node.\n- Development direction: Write HTTP request to parallel this downloading process.",
+        "content": "## 1.3. STORING UPLOADED FILES IN DRIVE STORAGE\n- The stored files (files from local uploading or from drive scan) are then uploaded to the internal Drive folder as prepared before.\n- The step can take a very long time because of Drive downloading node.\n- Reminder: Set the correct upload folder in the Upload Drive node.\n- Development direction: Write HTTP request to parallel this downloading process.",
         "height": 600,
         "width": 620,
         "color": 2
@@ -1357,7 +1356,7 @@
     },
     {
       "parameters": {
-        "content": "## README (Pre-requisite)\n- Set up [Google Drive API Authentication](https://docs.n8n.io/integrations/builtin/credentials/google/) for n8n\n- Get [OpenAI API key](https://docs.n8n.io/integrations/builtin/credentials/openai/) to use in OpenAI HTTP Request Nodes.\n- Set up [QDRANT Vector Database locally](https://qdrant.tech/documentation/quickstart/), running default on port 6333.\n- Set up API to interact with the Webhooks, example at [here](https://github.com/phamgiakiet273/n8n-knowledge-base)\n- Prepare text-only TXT (for Drive upload) and text-only PDF (for Drive / Local upload) for testing.",
+        "content": "## README (Pre-requisite)\n- Set up [Google Drive API Authentication](https://docs.n8n.io/integrations/builtin/credentials/google/) for n8n\n- Get [OpenAI API key](https://docs.n8n.io/integrations/builtin/credentials/openai/) to use in OpenAI HTTP Request Nodes.\n- Set up [QDRANT Vector Database locally](https://qdrant.tech/documentation/quickstart/) in Docker, running default on port 6333.\n- In QDRANT HTTP Nodes, you must use the docker IP of QDRANT instead of localhost, check this [method](https://stackoverflow.com/questions/17157721/how-to-get-a-docker-containers-ip-address-from-the-host).\n- Set up API to interact with the Webhooks, example at [here](https://github.com/phamgiakiet273/n8n-knowledge-base)\n- Prepare text-only TXT (for Drive upload) and text-only PDF (for Drive / Local upload) for testing.",
         "height": 320,
         "width": 520,
         "color": 3
@@ -1373,7 +1372,7 @@
     },
     {
       "parameters": {
-        "content": "## Example links\n- [Knowledge base storing and feedback logs](https://drive.google.com/drive/folders/16i_sFUz7XXkFJ1hDgyFqeLIAhS2CBvaD?usp=sharing)\n- [Live API](https://dd1e-113-23-110-90.ngrok-free.app/), contact phamgiakiet273@gmail.com if down.",
+        "content": "## Example links\n- [Knowledge base storage and feedback logs](https://drive.google.com/drive/folders/16i_sFUz7XXkFJ1hDgyFqeLIAhS2CBvaD?usp=sharing)\n- [Live API](https://dd1e-113-23-110-90.ngrok-free.app/), contact phamgiakiet273@gmail.com if down.",
         "height": 320,
         "width": 520,
         "color": 3
