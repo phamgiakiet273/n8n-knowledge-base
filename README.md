@@ -9,7 +9,7 @@ The system allows users to upload documents, query the content, and give suggest
 
 **Document Upload:**
 - Used N8N file handlings nodes to allow local files (PDF) uploading and drive files (PDF/TXT in a publicly shared folder) uploading.
-- The maximum number of files can be handled at once is 200. The larger the quanity, the slower the processing speed (125 documents will probably take up to 7 minutes to finish processing).
+- The maximum number of files can be handled at once is 20. The larger the quanity, the slower the processing speed.
 - Stored the uploaded documents on Google Drive.
 
 
