@@ -157,7 +157,7 @@
           "parameters": [
             {
               "name": "input",
-              "value": "=Chunk: {{ $json.chunks[0] }}"
+              "value": "=Chunk: {{ $json.chunks }}"
             },
             {
               "name": "model",
@@ -375,7 +375,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"points\": [\n    {\n      \"id\": {{$itemIndex}},\n      \"payload\": {\n        \"text\": \"{{ $('Merge into Chunks').item.json.chunks[$itemIndex].replace(/\\n/g, '') }}\"\n      },\n      \"vector\": [{{ $('Open AI Embedding Model HTTP Request').item.json.data[0].embedding }}\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"points\": [\n    {\n      \"id\": {{$itemIndex}},\n      \"payload\": {\n        \"text\": \"{{ $('Split into Chunk Items').item.json.chunks.replace(/\\n/g, '') }}\"\n      },\n      \"vector\": [{{ $('Open AI Embedding Model HTTP Request').item.json.data[0].embedding }}\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
